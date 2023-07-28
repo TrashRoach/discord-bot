@@ -6,8 +6,7 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from alembic import context
-from src.bot import models  # noqa: F401
-from src.db.base import Base
+from src import models
 from src.db.engine import DSN_STR
 
 config = context.config
@@ -16,7 +15,7 @@ config.set_main_option('sqlalchemy.url', DSN_STR)
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-target_metadata = Base.metadata
+target_metadata = models.Base.metadata
 
 
 def process_revision_directives(_context, _revision, directives) -> None:

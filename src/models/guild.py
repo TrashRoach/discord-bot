@@ -1,9 +1,9 @@
 from sqlalchemy import BigInteger, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from src.bot.models.annotations import bigint_pk
-from src.db.base import Base
 from src.db.utils import doc_and_comment
+from src.models import Base
+from src.models.annotations import bigint_pk
 
 
 class Guild(Base):

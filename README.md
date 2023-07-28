@@ -1,1 +1,3 @@
-# discord_bot
+```python
+raise NotImplementedError
+```
