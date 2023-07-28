@@ -1,8 +1,14 @@
 default:
   NAME: discord_bot
   TZ: null  # Timezone
-  LOG_FORMAT: '%(levelname)-8s [%(asctime)s] %(message)s'
+  LOG_FORMAT: '%(levelname)-8s [%(asctime)s] %(name)s %(message)s'
   LOG_LEVEL: INFO
   DISCORD:
     token: null
     prefix: null
+  POSTGRES:
+    host: postgres
+    port: 5432
+    user: postgres
+    password: postgres
+    database: discord_bot
