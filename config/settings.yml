@@ -1,5 +1,5 @@
 default:
-  NAME: discord_bot
+  NAME: discord-bot
   TZ: null  # Timezone
   LOG_FORMAT: '%(levelname)-8s [%(asctime)s] %(name)s %(message)s'
   LOG_LEVEL: INFO
