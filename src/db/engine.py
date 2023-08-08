@@ -1,7 +1,6 @@
 import contextlib
 from typing import AsyncIterator, Optional
 
-from dynaconf import settings
 from sqlalchemy.ext.asyncio import (
     AsyncConnection,
     AsyncEngine,
@@ -10,13 +9,7 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 
-DSN_STR = 'postgresql+asyncpg://{username}:{password}@{host}:{port}/{database}'.format(
-    username=settings.POSTGRES.user,
-    password=settings.POSTGRES.password,
-    host=settings.POSTGRES.host,
-    port=settings.POSTGRES.port,
-    database=settings.POSTGRES.database,
-)
+from settings.config import config
 
 
 class DatabaseSessionManager:
@@ -24,8 +17,8 @@ class DatabaseSessionManager:
         self._engine: Optional[AsyncEngine] = None
         self._sessionmaker: Optional[async_sessionmaker] = None
 
-    def init(self, host: str = DSN_STR):
-        self._engine = create_async_engine(host, echo=True, future=True)
+    def init(self, db_config: str = config.DB_CONFIG):
+        self._engine = create_async_engine(db_config, echo=True, future=True)
         self._sessionmaker = async_sessionmaker(self._engine, expire_on_commit=False, future=True)
 
     async def close(self):

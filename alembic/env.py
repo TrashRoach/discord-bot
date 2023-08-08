@@ -6,11 +6,11 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from alembic import context
+from settings.config import config as app_config
 from src import models
-from src.db.engine import DSN_STR
 
 config = context.config
-config.set_main_option('sqlalchemy.url', DSN_STR)
+config.set_main_option('sqlalchemy.url', app_config.DB_CONFIG)
 
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)

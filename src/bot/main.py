@@ -3,9 +3,10 @@ import logging
 
 import discord
 from discord.ext import commands
-from dynaconf import settings
 
+from settings.config import config
 from src.bot import cogs
+from src.db.engine import sessionmanager
 
 logger = logging.getLogger(__name__)
 
@@ -55,13 +56,17 @@ class DiscordBot(commands.Bot):
 
     @staticmethod
     def get_command_prefix():
-        return commands.when_mentioned_or(settings.DISCORD.prefix)
+        prefix = config.DISCORD_BOT_PREFIX
+        if prefix:
+            return commands.when_mentioned_or(prefix)
+        return commands.when_mentioned
 
 
 async def main():
-    logging.basicConfig(format=settings.LOG_FORMAT, level=settings.LOG_LEVEL)
+    logging.basicConfig(format=config.LOG_FORMAT, level=config.LOG_LEVEL)
     bot = DiscordBot()
-    await bot.start_bot(settings.DISCORD.token)
+    sessionmanager.init()
+    await bot.start_bot(config.DISCORD_BOT_TOKEN)
 
 
 if __name__ == '__main__':
