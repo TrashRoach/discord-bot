@@ -3,7 +3,7 @@ import os
 
 class Config:
     LOG_FORMAT = '%(levelname)-8s [%(asctime)s] %(name)s %(message)s'
-    LOG_LEVEL = 'INFO'
+    LOG_LEVEL = os.getenv('LOG_LEVEL', 'WARN')
 
     DB_CONFIG = os.getenv(
         'DB_CONFIG',

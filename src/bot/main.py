@@ -6,9 +6,10 @@ from discord.ext import commands
 
 from settings.config import config
 from src.bot import cogs
+from src.bot.events import setup_events
 from src.db.engine import sessionmanager
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('bot')
 
 
 class DiscordBot(commands.Bot):
@@ -18,20 +19,7 @@ class DiscordBot(commands.Bot):
         intents = discord.Intents.all()
 
         super().__init__(command_prefix=self.get_command_prefix(), intents=intents)
-        self.setup_events()
-
-    def setup_events(self):
-        @self.event
-        async def on_ready():
-            logger.info(f'{self.user.name} - Ready!')
-
-        @self.event
-        async def on_connect():
-            logger.info(f'{self.user.name} - Connected!')
-
-        @self.event
-        async def on_disconnect():
-            logger.debug(f'{self.user.name} - Disconnected!')
+        setup_events(self)
 
     async def setup_hook(self) -> None:
         results = await asyncio.gather(
@@ -41,11 +29,12 @@ class DiscordBot(commands.Bot):
         failures = {}
         for ext, result in zip(cogs.ALL_EXTENSIONS, results):
             if isinstance(result, Exception):
-                failures[ext] = f'```{result.__cause__ or result}```'
+                # TODO: send as Discord message too
+                failures[ext] = result.__cause__ or result
         if failures:
             logger.critical(
-                f'{len(failures)}/{len(results)} extensions failed to load.',
-                extra={'fields': failures},
+                f'{len(failures)}/{len(results)} extensions failed to load.\n{failures}',
+                # extra={'fields': failures},
             )
 
     async def start_bot(self, token: str) -> None:
@@ -64,8 +53,8 @@ class DiscordBot(commands.Bot):
 
 async def main():
     logging.basicConfig(format=config.LOG_FORMAT, level=config.LOG_LEVEL)
-    bot = DiscordBot()
     sessionmanager.init()
+    bot = DiscordBot()
     await bot.start_bot(config.DISCORD_BOT_TOKEN)
 
 
