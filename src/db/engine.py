@@ -23,7 +23,7 @@ class DatabaseSessionManager:
 
     async def close(self):
         if self._engine is None:
-            raise Exception("DatabaseSessionManager is not initialized")
+            raise Exception(f'{self.__class__.__name__} is not initialized')
         await self._engine.dispose()
         self._engine = None
         self._sessionmaker = None
@@ -31,7 +31,7 @@ class DatabaseSessionManager:
     @contextlib.asynccontextmanager
     async def connect(self) -> AsyncIterator[AsyncConnection]:
         if self._engine is None:
-            raise Exception("DatabaseSessionManager is not initialized")
+            raise Exception(f'{self.__class__.__name__} is not initialized')
 
         async with self._engine.begin() as connection:
             try:
