@@ -6,8 +6,8 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from src.db.utils import doc_and_comment
 from src.models import Base
 from src.models.annotations import bigint_pk
-from src.models.guild import Guild as GuildModel
-from src.models.user import User as UserModel
+from src.models.guild import Guild
+from src.models.user import User
 
 
 class Member(Base):
@@ -21,13 +21,43 @@ class Member(Base):
     )
 
     guild_id: Mapped[bigint_pk] = mapped_column(
-        ForeignKey('guilds.id', ondelete='CASCADE'), **doc_and_comment(GuildModel.id.__doc__), init=False, repr=False
+        ForeignKey('guilds.id', ondelete='CASCADE'),
+        init=False,
+        repr=False,
+        **doc_and_comment(Guild.id.__doc__),
     )
     user_id: Mapped[bigint_pk] = mapped_column(
-        ForeignKey('users.id', ondelete='CASCADE'), **doc_and_comment(UserModel.id.__doc__), init=False, repr=False
+        ForeignKey('users.id', ondelete='CASCADE'),
+        init=False,
+        repr=False,
+        **doc_and_comment(User.id.__doc__),
     )
-    display_name: Mapped[Optional[str]] = mapped_column(**doc_and_comment('Discord guild member\'s name'))
-    guild: Mapped['GuildModel'] = relationship(back_populates='members', lazy='joined', init=False)
-    user: Mapped['UserModel'] = relationship(back_populates='known_as', lazy='joined', init=False)
+    display_name: Mapped[Optional[str]] = mapped_column(
+        **doc_and_comment('Discord guild member\'s name'),
+    )
+    guild: Mapped['Guild'] = relationship(
+        back_populates='members',
+        lazy='joined',
+        init=False,
+    )
+    user: Mapped['User'] = relationship(
+        back_populates='known_as',
+        lazy='joined',
+        init=False,
+    )
 
-    active: Mapped[bool] = mapped_column(default=True, **doc_and_comment('Currently in guild'), repr=False)
+    active: Mapped[bool] = mapped_column(
+        default=True,
+        repr=False,
+        **doc_and_comment('Currently in guild'),
+    )
+
+    def to_dict(self):
+        return {
+            'guild_id': self.guild_id,
+            'user_id': self.user_id,
+            'display_name': self.display_name,
+            'guild': self.guild,  # type: 'Guild'
+            'user': self.user,  # type: 'User'
+            'active': self.active,
+        }

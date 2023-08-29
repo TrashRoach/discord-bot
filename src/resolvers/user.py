@@ -26,7 +26,7 @@ class User(BaseResolver):
         return user_obj
 
     @staticmethod
-    def discord_object_as_dict(user: DiscordMember) -> dict:
+    def from_discord(user: DiscordMember) -> dict:
         return {
             'id': user.id,
             'name': user.name,

@@ -60,21 +60,20 @@ class Guild(BaseResolver):
         ex_member_ids = old_member_ids - current_member_ids
         for ex_member_id in ex_member_ids:
             ex_member_data = {
-                'user': {'id': ex_member_id},
+                'user': {'id': ex_member_id},  # TODO: Mother of God WTF
                 'guild_id': guild_id,
                 'active': False,
-            }  # TODO: Mother of God WTF
+            }
             _ = await MemberResolver.update(session, ex_member_data)
-        # TODO: ex_member_ids.active = False
 
         return await cls.get(session, guild_id)
 
     @staticmethod
-    def discord_object_as_dict(guild: DiscordGuild) -> dict:
+    def from_discord(guild: DiscordGuild) -> dict:
         return {
             'id': guild.id,
             'name': guild.name,
             'owner_id': guild.owner_id,
-            'owner': UserResolver.discord_object_as_dict(guild.owner),
-            'members': [MemberResolver.discord_object_as_dict(member) for member in guild.members],
+            'owner': UserResolver.from_discord(guild.owner),
+            'members': [MemberResolver.from_discord(member) for member in guild.members],
         }

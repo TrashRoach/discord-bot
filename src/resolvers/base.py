@@ -22,12 +22,12 @@ class Base:
     @classmethod
     @abstractmethod
     async def create(cls, session: AsyncSession, data: dict) -> model:
-        pass
+        raise NotImplementedError
 
     @classmethod
     @abstractmethod
     async def update(cls, session: AsyncSession, data: dict) -> model:
-        pass
+        raise NotImplementedError
 
     @classmethod
     async def get(cls, session: AsyncSession, obj_id: int) -> Optional[_R]:

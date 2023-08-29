@@ -21,7 +21,7 @@ class Member(BaseResolver):
     @classmethod
     async def create(cls, session: AsyncSession, data: dict) -> MemberModel:
         user_data = data.pop('user')
-        user_obj = await UserResolver.get_or_create(session, user_data)
+        user_obj, _ = await UserResolver.get_or_create(session, user_data)
 
         guild_id = data.pop('guild_id')
         member_obj = cls.model(**data)
@@ -57,16 +57,16 @@ class Member(BaseResolver):
 
     @classmethod
     async def update_or_create(cls, session: AsyncSession, data: dict) -> MemberModel:
-        if await cls.get(session, user_id=data['user']['id'], guild_id=data['guild_id']):  # TODO: data['user']['id']
+        if await cls.get(session, user_id=data['user']['id'], guild_id=data['guild_id']):
             db_obj = await cls.update(session, data)
         else:
-            db_obj, _ = await cls.create(session, data)
+            db_obj = await cls.create(session, data)
         return db_obj
 
     @staticmethod
-    def discord_object_as_dict(member: DiscordMember) -> dict:
+    def from_discord(member: DiscordMember) -> dict:
         return {
             'guild_id': member.guild.id,
             'display_name': member.display_name,
-            'user': UserResolver.discord_object_as_dict(member),
+            'user': UserResolver.from_discord(member),
         }
