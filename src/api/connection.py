@@ -25,11 +25,38 @@ class Edge(Generic[GenericType]):
     node: GenericType = strawberry.field(description='The item at the end of the edge.')
 
 
-def to_connection(node_type: Union[strawberry.type, str], target) -> Connection:
+def to_connection(node_type: Union[strawberry.type, str], relationship_field) -> Connection:
+    """Converts SQLAlchemy's many-relationship fields to connection of specified edge nodes.
+
+    Parameters
+    -----------
+    node_type:
+        Strawberry type to form a Connection Edge Nodes from
+    relationship_field:
+        many-to-one / many-to-many SQLAlchemy model's field
+
+    Returns
+    --------
+    Connection[node_type]
+
+
+    Example
+    --------
+    to_connection(NodeType, model.one_to_many_field) will result in
+
+    oneToManyField {
+        edges {
+            node {
+                __typename  # NodeType
+            }
+        }
+    }
+    """
+
     edges = [
         Edge(
             node=cast(node_type, obj),
         )
-        for obj in target
+        for obj in relationship_field
     ]
     return Connection(edges=edges)

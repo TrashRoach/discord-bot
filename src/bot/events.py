@@ -7,7 +7,11 @@ logger = logging.getLogger(__name__)
 
 
 def setup_events(bot: commands.Bot):
-    """God is dead. God remains dead. And we have killed him"""
+    """
+    God is dead.
+    God remains dead.
+    And we have killed him.
+    """
 
     @bot.event
     async def on_ready():

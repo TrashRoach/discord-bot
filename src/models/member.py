@@ -38,11 +38,13 @@ class Member(Base):
     guild: Mapped['Guild'] = relationship(
         back_populates='members',
         lazy='joined',
+        innerjoin=True,
         init=False,
     )
     user: Mapped['User'] = relationship(
         back_populates='known_as',
         lazy='joined',
+        innerjoin=True,
         init=False,
     )
 
@@ -57,7 +59,7 @@ class Member(Base):
             'guild_id': self.guild_id,
             'user_id': self.user_id,
             'display_name': self.display_name,
-            'guild': self.guild,  # type: 'Guild'
-            'user': self.user,  # type: 'User'
+            'guild': self.guild,
+            'user': self.user,
             'active': self.active,
         }

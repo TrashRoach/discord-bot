@@ -1,5 +1,4 @@
 from discord import Guild as DiscordGuild
-from discord import Member as DiscordMember
 from sqlalchemy import update
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -12,6 +11,16 @@ from src.resolvers.user import User as UserResolver
 class Guild(BaseResolver):
     model = GuildModel
 
+    @classmethod
+    def _resolve_filter(cls, field: str):
+        filter_map = {
+            'ids': cls.model.id.in_,
+            'names': cls.model.name.in_,
+            'owner_ids': cls.model.owner_id.in_,
+        }
+        return filter_map[field]
+
+    # region TODO: revisit and refactor
     @classmethod
     async def create(cls, session: AsyncSession, data: dict) -> GuildModel:
         owner_data = data.pop('owner')
@@ -31,7 +40,7 @@ class Guild(BaseResolver):
             _ = await MemberResolver.create(session, member)
 
         await session.refresh(guild_obj)
-        return await cls.get(session, data['id'])
+        return await cls.get_by_id(session, data['id'])
 
     @classmethod
     async def update(cls, session: AsyncSession, data: dict) -> GuildModel:
@@ -66,7 +75,7 @@ class Guild(BaseResolver):
             }
             _ = await MemberResolver.update(session, ex_member_data)
 
-        return await cls.get(session, guild_id)
+        return await cls.get_by_id(session, guild_id)
 
     @staticmethod
     def from_discord(guild: DiscordGuild) -> dict:
@@ -77,3 +86,5 @@ class Guild(BaseResolver):
             'owner': UserResolver.from_discord(guild.owner),
             'members': [MemberResolver.from_discord(member) for member in guild.members],
         }
+
+    # endregion

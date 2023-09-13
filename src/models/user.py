@@ -50,7 +50,7 @@ class User(Base):
         back_populates='user',
         cascade='all, delete-orphan',
         default_factory=list,
-        lazy='subquery',
+        lazy='joined',
         repr=False,
     )
 
@@ -62,6 +62,6 @@ class User(Base):
             'global_name': self.global_name,
             'avatar_url': self.avatar_url,
             'bot': self.bot,
-            'owner_of': self.owner_of,  # type: List['Guild']
-            'known_as': self.known_as,  # type: List['Member']
+            'owner_of': self.owner_of,
+            'known_as': self.known_as,
         }

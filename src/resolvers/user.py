@@ -10,6 +10,16 @@ class User(BaseResolver):
     model = UserModel
 
     @classmethod
+    def _resolve_filter(cls, field: str):
+        filter_map = {
+            'ids': cls.model.id.in_,
+            'names': cls.model.name.in_,
+            'global_names': cls.model.global_name.in_,
+        }
+        return filter_map[field]
+
+    # region TODO: revisit and refactor
+    @classmethod
     async def create(cls, session: AsyncSession, data: dict) -> UserModel:
         user_obj = cls.model(**data)
 
@@ -34,3 +44,5 @@ class User(BaseResolver):
             'avatar_url': user.avatar.url if user.avatar else None,
             'bot': user.bot,
         }
+
+    # endregion

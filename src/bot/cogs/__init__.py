@@ -1,5 +1,5 @@
 ALL_EXTENSIONS = [
-    'cogs.test',
-    'cogs.management',
-    'cogs.utility',
+    'src.bot.cogs.test',
+    'src.bot.cogs.management',
+    'src.bot.cogs.utility',
 ]

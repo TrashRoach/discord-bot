@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "discord-bot"
-version = "0.2.1"
+version = "0.3.1"
 description = "Discord + SQLAlchemy 2.0 + FastAPI + Strawberry"
 authors = ["TrashRoach <rfsnboris@gmail.com>"]
 license = "MIT"
@@ -15,6 +15,7 @@ uvicorn = "^0.23.2"
 fastapi = "^0.100.1"
 strawberry-graphql = "^0.198.0"
 asyncpg = "^0.28.0"
+fastapi-lifespan-manager = "^0.1.0"
 
 [tool.poetry.group.dev.dependencies]
 alembic = "^1.11.1"

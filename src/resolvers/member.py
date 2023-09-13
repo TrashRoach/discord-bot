@@ -13,11 +13,23 @@ class Member(BaseResolver):
     model = MemberModel
 
     @classmethod
-    async def get(cls, session: AsyncSession, user_id: int, guild_id: int) -> Optional[MemberModel]:
+    def _resolve_filter(cls, field: str):
+        filter_map = {
+            'pks': tuple_(cls.model.user_id, cls.model.guild_id).in_,
+            'guild_ids': cls.model.guild_id.in_,
+            'user_ids': cls.model.user_id.in_,
+            'display_names': cls.model.display_name.in_,
+            'active': cls.model.active.is_,
+        }
+        return filter_map[field]
+
+    @classmethod
+    async def get_by_id(cls, session: AsyncSession, user_id: int, guild_id: int) -> Optional[MemberModel]:
         stmt = select(cls.model).where(tuple_(cls.model.user_id, cls.model.guild_id) == (user_id, guild_id))
         result = (await session.scalars(stmt)).unique().one_or_none()
         return result
 
+    # region TODO: revisit and refactor
     @classmethod
     async def create(cls, session: AsyncSession, data: dict) -> MemberModel:
         user_data = data.pop('user')
@@ -34,7 +46,7 @@ class Member(BaseResolver):
     @classmethod
     async def get_or_create(cls, session: AsyncSession, data: dict) -> (MemberModel, bool):
         created = False
-        if not (db_obj := await cls.get(session, user_id=data['user_id'], guild_id=data['guild_id'])):
+        if not (db_obj := await cls.get_by_id(session, user_id=data['user_id'], guild_id=data['guild_id'])):
             db_obj = await cls.create(session, data)
             created = True
         return db_obj, created
@@ -57,7 +69,7 @@ class Member(BaseResolver):
 
     @classmethod
     async def update_or_create(cls, session: AsyncSession, data: dict) -> MemberModel:
-        if await cls.get(session, user_id=data['user']['id'], guild_id=data['guild_id']):
+        if await cls.get_by_id(session, user_id=data['user']['id'], guild_id=data['guild_id']):
             db_obj = await cls.update(session, data)
         else:
             db_obj = await cls.create(session, data)
@@ -70,3 +82,5 @@ class Member(BaseResolver):
             'display_name': member.display_name,
             'user': UserResolver.from_discord(member),
         }
+
+    # endregion

@@ -7,7 +7,6 @@ from discord.ext import commands
 from settings.config import config
 from src.bot import cogs
 from src.bot.events import setup_events
-from src.db.engine import sessionmanager
 
 logger = logging.getLogger('bot')
 
@@ -51,12 +50,17 @@ class DiscordBot(commands.Bot):
         return commands.when_mentioned
 
 
-async def main():
-    logging.basicConfig(format=config.LOG_FORMAT, level=config.LOG_LEVEL)
-    sessionmanager.init()
-    bot = DiscordBot()
-    await bot.start_bot(config.DISCORD_BOT_TOKEN)
+bot = DiscordBot()
 
 
-if __name__ == '__main__':
-    asyncio.run(main())
+# TODO: remove maybe?
+# async def main():
+#     from src.db.engine import sessionmanager
+#
+#     logging.basicConfig(format=config.LOG_FORMAT, level=config.LOG_LEVEL)
+#     sessionmanager.init()
+#     await bot.start_bot(config.DISCORD_BOT_TOKEN)
+#
+#
+# if __name__ == '__main__':
+#     asyncio.run(main())

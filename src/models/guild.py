@@ -35,14 +35,15 @@ class Guild(Base):
     )
     owner: Mapped['User'] = relationship(
         back_populates='owner_of',
-        lazy='subquery',
+        lazy='joined',
+        innerjoin=True,
         init=False,
     )
     members: Mapped[List['Member']] = relationship(
         back_populates='guild',
         cascade='all, delete-orphan',
         default_factory=list,
-        lazy='subquery',
+        lazy='selectin',
     )
 
     def to_dict(self):
@@ -51,5 +52,5 @@ class Guild(Base):
             'name': self.name,
             'owner_id': self.owner_id,
             'owner': self.owner,
-            'members': self.members,  # type: List['Member']
+            'members': self.members,
         }
