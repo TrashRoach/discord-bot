@@ -15,7 +15,7 @@ def setup_events(bot: commands.Bot):
 
     @bot.event
     async def on_ready():
-        watching_activity = discord.Activity(type=discord.ActivityType.watching, name="You.")
+        watching_activity = discord.Activity(type=discord.ActivityType.watching, name='You.')
         await bot.change_presence(activity=watching_activity, status=discord.Status.do_not_disturb)
         logger.info(f'{bot.user.name} - Ready!')
 

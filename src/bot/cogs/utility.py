@@ -15,7 +15,7 @@ class Utility(BaseCog):
         ...
 
     @_random.command()
-    async def roll(self, ctx: commands.Context, start: Optional[int] = 1, end: Optional[int] = 100) -> None:
+    async def roll(self, ctx: commands.Context, start: int = 1, end: int = 100) -> None:
         """Roll a number in range provided (1-100 by default)"""
 
         if start > end:
@@ -42,7 +42,7 @@ class Utility(BaseCog):
         await ctx.send(choice)
 
     @_random.command()
-    async def coinflip(self, ctx: commands.Context) -> None:
+    async def flip(self, ctx: commands.Context) -> None:
         """Toss a coin"""
 
         cmd = self.bot.get_command('random choice')
